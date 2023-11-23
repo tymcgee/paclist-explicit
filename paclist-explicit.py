@@ -80,10 +80,23 @@ if __name__ == "__main__":
         prog="paclist-explicit",
         description="Displays all explicitly-installed pacman packages ordered by install date.",
     )
-    parser.add_argument("-d", "--hide-date", action="store_true")
     parser.add_argument(
-        "--date-format", choices=["iso", "ymd", "friendly"], default="ymd"
+        "-d",
+        "--hide-date",
+        action="store_true",
+        help="Hide the date from appearing in the output",
     )
-    parser.add_argument("-v", "--verbose", action="store_true")
+    parser.add_argument(
+        "--date-format",
+        choices=["iso", "ymd", "friendly"],
+        default="ymd",
+        help="Choose the format for the date (iso, yyyy-mm-dd, or friendly)",
+    )
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        action="store_true",
+        help="Show some debug information at the top before the list gets printed",
+    )
     args = parser.parse_args()
     main(args.hide_date, args.verbose, args.date_format)

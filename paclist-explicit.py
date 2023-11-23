@@ -19,7 +19,9 @@ import datetime
 from pathlib import Path
 
 
-def main(hide_date=False, is_verbose=False, date_format="ymd"):
+def main(
+    hide_date=False, is_verbose=False, date_format="ymd", show_package_version=False
+):
     installed_lines = []
     pacman_log_file = Path("/var/log/pacman.log")
     if not pacman_log_file.exists:
@@ -57,9 +59,10 @@ def main(hide_date=False, is_verbose=False, date_format="ymd"):
         )
     for line in by_date:
         s = line.split(" ")
-        if hide_date:
-            print(s[3])
-        else:
+        package_name = s[3]
+        package_version = s[4]
+        output = ""
+        if not hide_date:
             date = datetime.datetime.fromisoformat(s[0][1:-1])
             # default to y-m-d
             datestr = ""
@@ -72,7 +75,11 @@ def main(hide_date=False, is_verbose=False, date_format="ymd"):
                 datestr = date.isoformat()
             if date_format == "friendly":
                 datestr = date.strftime("%b %d, %Y")
-            print(datestr, s[3])
+            output += datestr + " "
+        output += package_name
+        if show_package_version:
+            output += " " + package_version
+        print(output)
 
 
 if __name__ == "__main__":
@@ -98,5 +105,11 @@ if __name__ == "__main__":
         action="store_true",
         help="Show some debug information at the top before the list gets printed",
     )
+    parser.add_argument(
+        "-s",
+        "--show-version",
+        action="store_true",
+        help="Show package versions next to their names",
+    )
     args = parser.parse_args()
-    main(args.hide_date, args.verbose, args.date_format)
+    main(args.hide_date, args.verbose, args.date_format, args.show_version)

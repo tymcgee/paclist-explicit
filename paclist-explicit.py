@@ -20,7 +20,10 @@ from pathlib import Path
 
 
 def main(
-    hide_date=False, is_verbose=False, date_format="ymd", show_package_version=False
+    hide_date=False,
+    is_verbose=False,
+    date_format="ymd",
+    show_package_version=False,
 ):
     installed_lines = []
     pacman_log_file = Path("/var/log/pacman.log")
@@ -57,13 +60,17 @@ def main(
         print(
             "Num of installed packages filtered by explicit installation:", len(by_date)
         )
+
     for line in by_date:
         s = line.split(" ")
         package_name = s[3]
-        package_version = s[4]
-        output = ""
+        package_version = ""
+        datestr = ""
         if not hide_date:
-            date = datetime.datetime.fromisoformat(s[0][1:-1])
+            # s[0] is [iso]
+            # s[0][1:-1] removes the brackets
+            iso = s[0][1:-1]
+            date = datetime.datetime.fromisoformat(iso)
             # default to y-m-d
             datestr = ""
             if date_format not in ("ymd", "iso", "friendly"):
@@ -75,11 +82,10 @@ def main(
                 datestr = date.isoformat()
             if date_format == "friendly":
                 datestr = date.strftime("%b %d, %Y")
-            output += datestr + " "
-        output += package_name
         if show_package_version:
-            output += " " + package_version
-        print(output)
+            package_version = s[4]
+
+        print(datestr, package_name, package_version)
 
 
 if __name__ == "__main__":

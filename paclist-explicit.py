@@ -14,10 +14,12 @@ pacman log file will not appear in the output.
 
 import sys
 import subprocess
+import argparse
+import datetime
 from pathlib import Path
 
 
-def main():
+def main(hide_date=False, is_verbose=False, date_format="ymd"):
     installed_lines = []
     pacman_log_file = Path("/var/log/pacman.log")
     if not pacman_log_file.exists:
@@ -47,12 +49,41 @@ def main():
     # Sometimes the installed num is different from the found by date. I wouldn't
     # expect that to be the case, but alas, I wrote this in 20 minutes and it works
     # well enough for my purposes.
-    print("Num of explicitly installed packages:", len(explicitly_installed))
-    print("Num of installed packages:", len(installed_lines))
-    print("Num of installed packages filtered by explicit installation:", len(by_date))
+    if is_verbose:
+        print("Num of explicitly installed packages:", len(explicitly_installed))
+        print("Num of installed packages:", len(installed_lines))
+        print(
+            "Num of installed packages filtered by explicit installation:", len(by_date)
+        )
     for line in by_date:
-        print(line)
+        s = line.split(" ")
+        if hide_date:
+            print(s[3])
+        else:
+            date = datetime.datetime.fromisoformat(s[0][1:-1])
+            # default to y-m-d
+            datestr = ""
+            if date_format not in ("ymd", "iso", "friendly"):
+                print("Invalid date format, falling back to yyyy-mm-dd")
+                datestr = date.strftime("%Y-%m-%d")
+            if date_format == "ymd":
+                datestr = date.strftime("%Y-%m-%d")
+            if date_format == "iso":
+                datestr = date.isoformat()
+            if date_format == "friendly":
+                datestr = date.strftime("%b %d, %Y")
+            print(datestr, s[3])
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(
+        prog="paclist-explicit",
+        description="Displays all explicitly-installed pacman packages ordered by install date.",
+    )
+    parser.add_argument("-d", "--hide-date", action="store_true")
+    parser.add_argument(
+        "--date-format", choices=["iso", "ymd", "friendly"], default="ymd"
+    )
+    parser.add_argument("-v", "--verbose", action="store_true")
+    args = parser.parse_args()
+    main(args.hide_date, args.verbose, args.date_format)

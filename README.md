@@ -7,24 +7,29 @@ Install dates are specified in `pacman.log`.
 # Usage
 `python paclist-explicit.py`
 
-There are no arguments.
+Arguments:
+| Argument                         | Purpose                                                             |
+|----------------------------------|---------------------------------------------------------------------|
+| -d --hide-date                   | Hide the date from appearing in the output                          |
+| --date-format {iso,ymd,friendly} | Choose the format for the date (iso, yyyy-mm-dd, or friendly)       |
+| -v --verbose                     | Show some debug information at the top before the list gets printed |
+| -s --show-version                | Show package versions next to their names                           |
 
 ## Example output:
 ```
 ...
-[2023-10-12T19:54:19-0700] [ALPM] installed jq (1.7-1)
-[2023-10-14T13:08:00-0700] [ALPM] installed httpie (3.2.1-4)
-[2023-10-18T19:38:42-0700] [ALPM] installed docker-buildx (0.11.2-1)
-[2023-10-28T13:04:07-0700] [ALPM] installed node-gyp (9.4.0-1)
-[2023-11-01T21:41:43-0700] [ALPM] installed ncspot (0.13.2-3)
-[2023-11-02T23:34:19-0700] [ALPM] installed fzf (0.43.0-1)
-[2023-11-09T21:42:33-0800] [ALPM] installed cloc (1.98-1)
+2023-05-29 lightdm 
+2023-05-29 lightdm-webkit2-greeter 
+2023-05-29 lightdm-webkit-theme-litarvan 
+2023-05-29 bat 
+2023-05-29 gnome-keyring 
+2023-05-30 opusfile 
+2023-05-30 gst-plugins-base 
+2023-11-19 eza 
+2023-11-19 go 
+2024-02-28 tectonic
 ...
 ```
-
-# Warning
-This was written in 20 minutes and is not guaranteed to work as described.
-It's good enough for my own purposes.
 
 # License
 The UNLICENSE
